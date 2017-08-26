@@ -1,0 +1,86 @@
+#!/bin/bash
+# usage ./tv_channel "rtl 2"
+# usage ./tv_channel "chromecast"
+# usage ./tv_channel "nachrichten"
+
+echo "$0 $1" >> /home/pi/assistant-helper/foo.log
+
+REMOTE="Samsung_BN59-00865A"
+INPUT_CHANNEL=`echo "$1" | awk '{print tolower($0)}'`
+
+if [[ "$INPUT_CHANNEL" == *"ard"* ]] || [[ "$INPUT_CHANNEL" == *"nachrichten"* ]] || [[ "$INPUT_CHANNEL" == *"tagesschau"* ]]; then
+    NUMBER=1
+elif [[ "$INPUT_CHANNEL" == *"zdf"* ]]; then
+    NUMBER=2
+elif [[ "$INPUT_CHANNEL" == *"rtl nitro"* ]]; then
+    NUMBER=11
+elif [[ "$INPUT_CHANNEL" == *"rtl 2"* ]] || [[ "$INPUT_CHANNEL" == *"rtl2"* ]] || [[ "$INPUT_CHANNEL" == *"rtl ii"* ]]; then
+    NUMBER=7
+elif [[ "$INPUT_CHANNEL" == *"rtl"* ]]; then
+    NUMBER=3
+elif [[ "$INPUT_CHANNEL" == *"sat1"* ]]; then
+    NUMBER=4
+elif [[ "$INPUT_CHANNEL" == *"prosieben max"* ]]; then
+    NUMBER=10
+elif [[ "$INPUT_CHANNEL" == *"prosieben"* ]] || [[ "$INPUT_CHANNEL" == *"pro7"* ]]; then
+    NUMBER=5
+elif [[ "$INPUT_CHANNEL" == *"kabel1"* ]] || [[ "$INPUT_CHANNEL" == *"kabel 1"* ]]; then
+    NUMBER=6
+elif [[ "$INPUT_CHANNEL" == *"vox"* ]]; then
+    NUMBER=8
+elif [[ "$INPUT_CHANNEL" == *"sixt"* ]]; then
+    NUMBER=9
+else
+    NUMBER=0
+fi
+
+if [ "$NUMBER" -gt "0" ]; then
+  irsend SEND_ONCE $REMOTE KEY_$NUMBER
+  sleep 0.2
+  irsend SEND_ONCE $REMOTE ENTER-OK
+  exit
+fi
+
+
+#############
+## SOURCE ###
+#############
+
+# switch back to tv
+if [ "$INPUT_CHANNEL" == "tv" ];
+then
+	irsend SEND_ONCE $REMOTE KEY_TV
+	exit 1;
+fi
+
+# switch back to normal tv to have the source list ordered
+# irsend SEND_ONCE $REMOTE KEY_TV
+# sleep 2.5
+
+# open sources dialog
+irsend SEND_ONCE $REMOTE KEY_CYCLEWINDOWS
+sleep 1.5
+
+# switch ext, pc
+irsend SEND_ONCE $REMOTE KEY_DOWN
+sleep 0.4
+irsend SEND_ONCE $REMOTE KEY_DOWN
+sleep 0.4
+
+case "$INPUT_CHANNEL" in
+	firetv)
+	    irsend SEND_ONCE $REMOTE KEY_DOWN
+	    sleep 0.4
+	    irsend SEND_ONCE $REMOTE KEY_DOWN
+	    sleep 0.4
+	    ;;
+	 
+	chromecast)
+	    irsend SEND_ONCE $REMOTE KEY_DOWN
+	    sleep 0.4
+	    ;; 
+esac
+
+# enter
+irsend SEND_ONCE $REMOTE ENTER-OK
+

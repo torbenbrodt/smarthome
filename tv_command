@@ -1,0 +1,59 @@
+#!/bin/bash
+# usage ./tv_control "strom sparen"
+# usage ./tv_control "fernseher an"
+# usage ./tv_channel "lauter"
+
+echo "$0 $1" >> /home/pi/assistant-helper/foo.log
+
+REMOTE="Samsung_BN59-00865A"
+INPUT_CHANNEL=`echo "$1" | awk '{print tolower($0)}'`
+
+##########
+## DARK ##
+##########
+if [[ "$INPUT_CHANNEL" == *"dark"* ]] || [[ "$INPUT_CHANNEL" == *"dunkel"* ]] || [[ "$INPUT_CHANNEL" == *"strom sparen"* ]]; then
+  irsend SEND_ONCE $REMOTE KEY_MENU
+  sleep 0.5
+  irsend SEND_ONCE $REMOTE KEY_DOWN
+  sleep 0.25
+  irsend SEND_ONCE $REMOTE KEY_DOWN
+  sleep 0.2
+  irsend SEND_ONCE $REMOTE KEY_RIGHT
+  sleep 0.35
+  irsend SEND_ONCE $REMOTE KEY_UP
+  sleep 0.25
+  irsend SEND_ONCE $REMOTE KEY_RIGHT
+  sleep 0.35
+  irsend SEND_ONCE $REMOTE KEY_DOWN
+  sleep 0.25
+  irsend SEND_ONCE $REMOTE KEY_RIGHT
+  sleep 0.35
+  irsend SEND_ONCE $REMOTE KEY_UP
+  sleep 0.3
+  irsend SEND_ONCE $REMOTE KEY_UP
+  sleep 0.3
+
+  exit
+fi
+
+
+################
+## ONE BUTTON ##
+################
+if [[ "$INPUT_CHANNEL" == *"fernseh an"* ]] || [[ "$INPUT_CHANNEL" == *"fernseher an"* ]] || [[ "$INPUT_CHANNEL" == *"fernseh aus"* ]] || [[ "$INPUT_CHANNEL" == *"fernseher aus"* ]]; then
+    COMMAND="KEY_POWER"
+elif [[ "$INPUT_CHANNEL" == *"leise"* ]]; then
+    COMMAND="KEY_VOLUMEDOWN"
+elif [[ "$INPUT_CHANNEL" == *"laut"* ]]; then
+    COMMAND="KEY_VOLUMEUP"
+elif [[ "$INPUT_CHANNEL" == *"videotext"* ]] || [[ "$INPUT_CHANNEL" == *"teletext"* ]]; then
+    COMMAND="TEXT-MIX"
+elif [[ "$INPUT_CHANNEL" == *"zurück"* ]]; then
+    COMMAND="PRE-CH"
+fi
+
+if [ -n "$COMMAND" ]; then
+    irsend SEND_ONCE $REMOTE $COMMAND
+    echo "irsend SEND_ONCE $REMOTE $COMMAND"
+fi
+

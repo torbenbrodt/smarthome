@@ -1,0 +1,86 @@
+host: "0.0.0.0"
+port: 9900
+pretty_json: true
+endpoints:
+  -
+    path: "/temperature"
+    authorizers:
+      - "basic"
+    methods:
+      GET:
+        type: "shell"
+        query_params:
+          params:
+           - 
+             name: "sensor"
+             regexp: "^[a-zA-Z]+$"
+        config:
+          commands:
+            - 
+              chdir: "/tmp"
+              command: "/home/pi/assistant-helper/temperature {{.query.sensor}}"
+              format: "text"
+  -
+    path: "/transmitter"
+    authorizers:
+      - "basic"
+    methods:
+      POST:
+        type: "shell"
+        query_params:
+          params:
+           - 
+             name: "switch"
+             regexp: "^[a-zA-Z]+$"
+           - 
+             name: "device"
+             regexp: "^[a-zA-Z]+$"
+        config:
+          commands:
+            - 
+              chdir: "/tmp"
+              command: "sudo /home/pi/assistant-helper/transmitter {{.query.device}} {{.query.switch}}"
+              format: "text"
+  -
+    path: "/tv/channel"
+    authorizers:
+      - "basic"
+    methods:
+      POST:
+        type: "shell"
+        query_params:
+          params:
+           -
+             name: "channel"
+             regexp: "^[a-zA-Z0-9]+$"
+        config:
+          commands:
+            - 
+              chdir: "/tmp"
+              command: "sudo /home/pi/assistant-helper/tv_channel {{.query.channel}}"
+              format: "text"
+  -
+    path: "/tv/command"
+    authorizers:
+      - "basic"
+    methods:
+      POST:
+        type: "shell"
+        query_params:
+          params:
+           -
+             name: "command"
+             regexp: "^[a-zA-Z0-9 ]+$"
+        config:
+          commands:
+            - 
+              chdir: "/tmp"
+              command: "sudo /home/pi/assistant-helper/tv_command \"{{.query.command}}\""
+              format: "text"
+authorizers:
+  basic:
+    type: "basic"
+    config:
+      username: "apiai"
+      password: "XXX"
+

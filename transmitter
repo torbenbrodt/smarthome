@@ -1,0 +1,29 @@
+#!/bin/bash
+# usage: ./transmitter ecklampe an
+
+echo "$0 $1" >> /home/pi/assistant-helper/foo.log
+
+INPUT_DEVICE=`echo "$1" | awk '{print tolower($0)}'`
+INPUT_SWITCH=`echo "$2" | awk '{print tolower($0)}'`
+
+if [ "$INPUT_SWITCH" == "an" ];
+then
+        MSG=1
+else
+	MSG=0
+fi
+
+
+DEVICE=""
+if [ "$INPUT_DEVICE" == "ecklampe" ];
+then
+        DEVICE=1
+fi
+
+if [ "$DEVICE" -gt "0" ];
+then
+	sudo /home/pi/433Utils/RPi_utils/send 01101 $DEVICE $MSG
+else
+	echo "error"
+fi
+

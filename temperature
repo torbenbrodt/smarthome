@@ -1,0 +1,11 @@
+#!/bin/bash
+# usage: ./temperatur system
+
+INPUT_DEVICE=`echo "$1" | awk '{print tolower($0)}'`
+
+if [ "$INPUT_DEVICE" == "system" ];
+then
+	INPUT=$(awk "BEGIN {print $(/bin/cat /sys/class/thermal/thermal_zone0/temp)/1000}")
+	echo $INPUT
+fi
+
