@@ -4,7 +4,8 @@ Collection of scripts which I use at home.
 I use these helpers to
  - control TV via Infrared
  - control lights via 433MHz transmitter
- - control lights via TV remote
+ - control lights via TV remote (via 433MHz transmitter)
+ - control lights when motion is detected (via 433MHz transmitter)
  - take pictures via webcam
 
 Technically I use
@@ -18,10 +19,9 @@ Technically I use
  - LAOMAO 5 Infrared LED emission & receiver
 
 Potential future projects
- - DHT22/AM2302 temperature monitoring
- - motion sensor to toggle lights
+ - DHT22/AM2302 temperature monitoring (but no more 3.3V)
  - 3.5" touch display running browser to show temperature and have command shortcuts
- - System update to Stretch
+ - System update to Strech incl. Desktop and autostart browser with tabswitcher plugin
  - Better documentation ;)
 
 ## Goexpose
