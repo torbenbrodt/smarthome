@@ -1,18 +1,21 @@
 #!/bin/bash
 # usage: ./transmitter ecklampe an
-
-echo "$0 $1" >> /home/pi/assistant-helper/foo.log
+# usage: ./transmitter girlande aus
+# usage: ./transmitter heizung toggle
 
 INPUT_DEVICE=`echo "$1" | awk '{print tolower($0)}'`
 INPUT_SWITCH=`echo "$2" | awk '{print tolower($0)}'`
 
-if [ "$INPUT_SWITCH" == "an" ];
-then
-        MSG=1
-else
-	MSG=0
-fi
+STATUS_FILE="$(dirname "${0}")/$INPUT_DEVICE.state"
 
+if [ "$INPUT_SWITCH" == "toggle" ];
+then
+	if [ -f $STATUS_FILE ]; then
+		INPUT_SWITCH="aus"
+	else
+		INPUT_SWITCH="an"
+	fi
+fi
 
 DEVICE=""
 if [ "$INPUT_DEVICE" == "ecklampe" ];
@@ -20,10 +23,35 @@ then
         DEVICE=1
 fi
 
-if [ "$DEVICE" -gt "0" ];
+
+case "$INPUT_DEVICE" in
+        ecklampe)
+            DEVICE=1
+            ;;
+         
+        girlande)
+            DEVICE=2
+            ;;
+         
+        heizung)
+            DEVICE=3
+            ;;
+         
+        *)
+            echo "error"
+            exit 1
+ 
+esac
+
+
+if [ "$INPUT_SWITCH" == "an" ];
 then
-	sudo /home/pi/433Utils/RPi_utils/send 01101 $DEVICE $MSG
+        MSG=1
+	touch $STATUS_FILE
 else
-	echo "error"
+	MSG=0
+	rm $STATUS_FILE
 fi
+
+sudo /home/pi/433Utils/RPi_utils/send 01101 $DEVICE $MSG
 

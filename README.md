@@ -4,6 +4,7 @@ Collection of scripts which I use at home.
 I use these helpers to
  - control TV via Infrared
  - control lights via 433MHz transmitter
+ - control lights via TV remote
  - take pictures via webcam
 
 Technically I use
@@ -18,7 +19,7 @@ Technically I use
 
 Potential future projects
  - DHT22/AM2302 temperature monitoring
- - motion senseor to toggle lights
+ - motion sensor to toggle lights
  - 3.5" touch display running browser to show temperature and have command shortcuts
  - System update to Stretch
  - Better documentation ;)

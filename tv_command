@@ -3,8 +3,6 @@
 # usage ./tv_control "fernseher an"
 # usage ./tv_channel "lauter"
 
-echo "$0 $1" >> /home/pi/assistant-helper/foo.log
-
 REMOTE="Samsung_BN59-00865A"
 INPUT_CHANNEL=`echo "$1" | awk '{print tolower($0)}'`
 

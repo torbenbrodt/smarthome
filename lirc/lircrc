@@ -1,0 +1,20 @@
+begin
+    button = KEY_RED
+    prog = irexec
+    config = /home/pi/assistant-helper/transmitter ecklampe toggle
+    repeat = 0
+end
+
+begin
+    button = KEY_GREEN
+    prog = irexec
+    config = /home/pi/assistant-helper/transmitter girlande toggle
+    repeat = 0
+end
+
+begin
+    button = KEY_YELLOW
+    prog = irexec
+    config = /home/pi/assistant-helper/transmitter heizung toggle
+    repeat = 0
+end
