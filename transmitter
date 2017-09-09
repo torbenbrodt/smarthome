@@ -50,7 +50,9 @@ then
 	touch $STATUS_FILE
 else
 	MSG=0
-	rm $STATUS_FILE
+	if [ -f $STATUS_FILE ]; then	
+		rm $STATUS_FILE
+	fi
 fi
 
 sudo /home/pi/433Utils/RPi_utils/send 01101 $DEVICE $MSG
