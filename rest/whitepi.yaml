@@ -1,0 +1,29 @@
+host: "0.0.0.0"
+port: 9901
+pretty_json: true
+endpoints:
+  -
+    path: "/temperature"
+    authorizers:
+      - "basic"
+    methods:
+      GET:
+        type: "shell"
+        query_params:
+          params:
+           - 
+             name: "sensor"
+             regexp: "^[a-zA-Z]+$"
+        config:
+          commands:
+            - 
+              chdir: "/tmp"
+              command: "/home/pi/assistant-helper/temperature {{.query.sensor}}"
+              format: "text"
+authorizers:
+  basic:
+    type: "basic"
+    config:
+      username: "apiai"
+      password: "XXX"
+
