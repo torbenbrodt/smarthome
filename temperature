@@ -7,5 +7,15 @@ if [ "$INPUT_DEVICE" == "system" ];
 then
 	INPUT=$(awk "BEGIN {print $(/bin/cat /sys/class/thermal/thermal_zone0/temp)/1000}")
 	echo $INPUT
+	exit;
 fi
 
+
+if [ "$INPUT_DEVICE" == "gpio7" ];
+then
+	GPIO=7
+	INPUT=$(/home/pi/lol_dht22/loldht $GPIO | grep "Temperature")
+	HUM=$(echo $INPUT|cut -d " " -f3)
+	TEMP=$(echo $INPUT|cut -d " " -f7)
+	echo $TEMP
+fi
