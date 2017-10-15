@@ -77,6 +77,94 @@ endpoints:
               chdir: "/tmp"
               command: "sudo /home/pi/assistant-helper/tv_command \"{{.query.command}}\""
               format: "text"
+  -
+    path: "/browser/tab"
+    authorizers:
+      - "basic"
+    methods:
+      POST:
+        type: "shell"
+        query_params:
+          params:
+           -
+             name: "action"
+             regexp: "^[a-z]+$"
+        config:
+          commands:
+            - 
+              chdir: "/tmp"
+              command: "/home/pi/assistant-helper/browser tab \"{{.query.action}}\""
+              format: "text"
+
+  -
+    path: "/chromecast/control"
+    authorizers:
+      - "basic"
+    methods:
+      POST:
+        type: "shell"
+        query_params:
+          params:
+           -
+             name: "action"
+             regexp: "^[a-zA-Z]+$"
+        config:
+          commands:
+            - 
+              chdir: "/tmp"
+              command: "python /home/pi/assistant-helper/cast/cast.py --{{.query.action}} 1 &"
+              format: "text"
+  -
+    path: "/chromecast/stream"
+    authorizers:
+      - "basic"
+    methods:
+      POST:
+        type: "shell"
+        query_params:
+          params:
+           -
+             name: "url"
+             regexp: "^[^ ]+$"
+        config:
+          commands:
+            - 
+              chdir: "/tmp"
+              command: "python /home/pi/assistant-helper/cast/cast.py --play 1 --url \"{{.query.url}}\" &"
+              format: "text"
+  -
+    path: "/browser/search"
+    authorizers:
+      - "basic"
+    methods:
+      POST:
+        type: "shell"
+        query_params:
+          params:
+           -
+             name: "q"
+             regexp: "^[a-zA-Z0-9%]+$"
+        config:
+          commands:
+            - 
+              chdir: "/tmp"
+              command: "/home/pi/assistant-helper/browser search \"{{.query.q}}\""
+              format: "text"
+  -
+    path: "/system/restart"
+    authorizers:
+      - "basic"
+    methods:
+      POST:
+        type: "shell"
+        config:
+          commands:
+            - 
+              chdir: "/tmp"
+              command: "sudo reboot"
+              format: "text"
+
+
 authorizers:
   basic:
     type: "basic"

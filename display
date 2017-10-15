@@ -1,0 +1,19 @@
+#!/bin/bash
+# usage: ./display toggle
+
+INPUT_SWITCH=`echo "$1" | awk '{print tolower($0)}'`
+
+export DISPLAY=:0.0
+export XAUTHORITY=/home/pi/.Xauthority
+
+if [ "$INPUT_SWITCH" == "toggle" ];
+then
+	STATUS_FILE="$(dirname "${0}")/display.state"
+	if [ -f $STATUS_FILE ]; then
+		rm $STATUS_FILE
+		xset dpms force on
+	else
+		touch $STATUS_FILE
+		xset dpms force off
+	fi
+fi

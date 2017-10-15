@@ -33,7 +33,7 @@ case "$INPUT_DEVICE" in
             DEVICE=2
             ;;
          
-        heizung)
+        display)
             DEVICE=3
             ;;
          

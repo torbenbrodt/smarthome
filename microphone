@@ -1,0 +1,11 @@
+#!/bin/bash
+
+export DISPLAY=:0.0
+export XAUTHORITY=/home/pi/.Xauthority
+
+# activate microphone
+xdotool mousemove 440 640 click 1
+
+# activate backgronud
+xdotool mousemove 40 680 click 1
+

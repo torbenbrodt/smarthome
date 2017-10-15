@@ -1,0 +1,11 @@
+[Unit]
+Description=Start goexpose REST server.
+After=multi-user.target
+
+[Service]
+User=pi
+Restart=always
+ExecStart=/usr/local/go/bin/go run /home/pi/go/src/github.com/phonkee/goexpose/cmd/goexpose/goexpose.go --config /home/pi/assistant-helper/rest/blackpi.yaml -format yaml -log_dir /var/log/goexpose -stderrthreshold=INFO -v 2
+
+[Install]
+WantedBy=multi-user.target

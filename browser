@@ -1,0 +1,37 @@
+#!/bin/bash
+# usage: ./browser tab switch
+# usage: ./browser tab close
+# usage: ./browser search foo
+
+export DISPLAY=:0.0
+export XAUTHORITY=/home/pi/.Xauthority
+
+INPUT_ACTION=`echo "$1" | awk '{print tolower($0)}'`
+INPUT_PARAMETER=`echo "$2" | awk '{print tolower($0)}'`
+
+case "$INPUT_ACTION" in
+        tab)
+            case "$INPUT_PARAMETER" in
+                    switch)
+                        xdotool key ctrl+Tab
+                        ;;
+
+                    close)
+                        xdotool key ctrl+w
+                        ;;
+
+                    *)
+                        echo "tab error"
+                        exit 1
+            esac
+            ;;
+
+        search)
+            chromium-browser -new-tab "https://www.google.de/search?q=$INPUT_PARAMETER" &
+            ;;
+
+        *)
+            echo "error"
+            exit 1
+esac
+
