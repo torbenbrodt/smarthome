@@ -1,5 +1,6 @@
 #!/bin/bash
 # usage: ./temperatur system
+# usage: ./temperatur innen
 
 INPUT_DEVICE=`echo "$1" | awk '{print tolower($0)}'`
 
@@ -11,10 +12,10 @@ then
 fi
 
 
-if [ "$INPUT_DEVICE" == "gpio7" ];
+if [[ "$INPUT_DEVICE" == "gpio7" ]] || [[ "$INPUT_DEVICE" == "innen" ]];
 then
 	GPIO=7
-	INPUT=$(/home/pi/lol_dht22/loldht $GPIO | grep "Temperature")
+	INPUT=$(sudo /home/pi/lol_dht22/loldht $GPIO | grep "Temperature")
 	HUM=$(echo $INPUT|cut -d " " -f3)
 	TEMP=$(echo $INPUT|cut -d " " -f7)
 	echo $TEMP
