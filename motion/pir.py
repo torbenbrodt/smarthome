@@ -6,7 +6,7 @@ import requests
 import argparse
  
 parser = argparse.ArgumentParser(description='Chromecast toolset.')
-parser.add_argument('--sensorpin', help='Sensor Pin.')
+parser.add_argument('--sensorpin', type=int, help='Sensor Pin.')
 args = parser.parse_args()
 
 config = ConfigParser()
@@ -17,6 +17,8 @@ TRANSMITTER_USER = config.get('transmitter', 'api_user')
 TRANSMITTER_PASS = config.get('transmitter', 'api_pass')
 
 SENSOR_PIN = args.sensorpin
+
+print SENSOR_PIN
  
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(SENSOR_PIN, GPIO.IN)
@@ -26,6 +28,7 @@ def mein_callback(channel):
         switch = "an"
     else:
         switch = "aus"
+    print switch
     r = requests.post(TRANSMITTER_URL + "/transmitter?device=ecklampe&switch=" + switch, auth=(TRANSMITTER_USER, TRANSMITTER_PASS))
 
 try:
