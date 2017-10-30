@@ -27,7 +27,11 @@
 	</script>
 </head>
 <body>
-
+<p style="text-align:center">
+<button class="mdl-button mdl-js-button mdl-button--fab mdl-button--colored" onclick="document.location.href = 'stream.php'">
+  <i class="material-icons">av_timer</i>
+</button>
+</p>
 <?php
 $otr_download_url = 'https://www.onlinetvrecorder.com/v2/?go=list&tab=search&preset=5';
 

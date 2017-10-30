@@ -6,13 +6,6 @@
         <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
         <link rel="stylesheet" href="https://code.getmdl.io/1.3.0/material.indigo-pink.min.css">
         <script defer src="https://code.getmdl.io/1.3.0/material.min.js"></script>
-        <style type="text/css">
-        .demo-card-wide > .mdl-card__title {
-          color: #fff;
-          width: 320px;
-          height: 200px;
-        }
-        </style>
 	<script type="text/javascript">
 	function updateSlider(seconds) {
 		var seconds = parseInt(document.getElementById('text_01').value) + (parseInt(document.getElementById('text_01').value) * 60);
@@ -21,9 +14,10 @@
 			document.getElementById('s1').value + 's';
 	}
 	function chromecastControl(action) {
-		var param = '';
-		if (action == 'rewind' || action == 'forward') {
-			param = '';
+		var duration = '';
+		if (action == 'seekback' || action == 'seekforward') {
+			duration = '{"amount":'+(parseInt(document.getElementById('s2').value*60) + parseInt(document.getElementById('s1').value))+
+				',"unit":"s"}';
 		}	
 
                 var snackbarContainer = document.querySelector('#demo-snackbar-example');
@@ -34,8 +28,11 @@
                 };
                 notification.MaterialSnackbar.showSnackbar(data);
 
-		var url = 'http://blackpi:9900/' + action;
-		alert(url);
+		var url = 'ajax.php?action=' + action;
+		if (duration) {
+			url += '&duration=' + duration;
+		}
+		(new Image()).src = url;
 	}
         </script>
 </head>
@@ -47,20 +44,20 @@
   </div>
 </p>
 
-<button class="mdl-button mdl-js-button mdl-button--fab mdl-button--colored" style="float: left; margin: 0px 10px 0px 5px" onclick="chromecastControl('rewind')">
+<button class="mdl-button mdl-js-button mdl-button--fab mdl-button--colored" style="float: left; margin: 0px 10px 0px 5px" onclick="chromecastControl('seekback')">
   <i class="material-icons">fast_rewind</i>
 </button>
-<button class="mdl-button mdl-js-button mdl-button--fab mdl-button--colored" style="float: right; margin-right: 5px" onclick="chromecastControl('forward')">
+<button class="mdl-button mdl-js-button mdl-button--fab mdl-button--colored" style="float: right; margin-right: 5px" onclick="chromecastControl('seekforward')">
   <i class="material-icons">fast_forward</i>
 </button>
 
-<p>
+<p style="padding-top:15px">
 <span style="float:left">sec</span>
 <input class="mdl-slider mdl-js-slider" type="range" id="s1" min="0" max="60" value="0" step="1" onchange="updateSlider()">
 </p>
-<p>
+<p style="padding-top:15px">
 <span style="float:left">min</span>
-<input class="mdl-slider mdl-js-slider" type="range" id="s2" min="0" max="60" value="0" step="1" onchange="updateSlider()">
+<input class="mdl-slider mdl-js-slider" type="range" id="s2" min="0" max="30" value="0" step="1" onchange="updateSlider()">
 </p>
 
 <p style="text-align:center">
