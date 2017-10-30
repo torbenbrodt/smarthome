@@ -17,6 +17,7 @@ parser.add_argument('--pause', help='Send the PAUSE command.')
 parser.add_argument('--play', help='Send the PLAY command.')
 parser.add_argument('--skip', help='Skips rest of the media.')
 parser.add_argument('--rewind', help='Starts playing the media from the beginning.')
+parser.add_argument('--codec', help='Codec, e.g. video/mp4')
 args = parser.parse_args()
 
 config = ConfigParser()
@@ -38,7 +39,11 @@ print("wait for chromecast")
 mc = cast.media_controller
 
 if args.url:
-    mc.play_media(args.url, 'video/mp4')
+    if args.codec:
+        codec = args.codec
+    else:
+        codec = 'video/mp4'
+    mc.play_media(args.url, codec)
 
 mc.block_until_active()
 
