@@ -5,7 +5,7 @@ After=multi-user.target
 [Service]
 User=pi
 Restart=always
-ExecStart=/usr/bin/python home/pi/assistant-helper/motion/pir.py --sensorpin 27
+ExecStart=/usr/bin/python home/pi/assistant-helper/motion/pir.py --sensorpin 18
 
 [Install]
 WantedBy=multi-user.target
