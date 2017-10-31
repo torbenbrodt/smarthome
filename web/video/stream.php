@@ -1,11 +1,11 @@
 <html>
 <head>  
-        <title>Blackpi Video</title>
-        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
-        <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
-        <link rel="stylesheet" href="https://code.getmdl.io/1.3.0/material.indigo-pink.min.css">
-        <script defer src="https://code.getmdl.io/1.3.0/material.min.js"></script>
+    <title>Blackpi Video Control</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" href="https://code.getmdl.io/1.3.0/material.indigo-pink.min.css">
+    <script defer src="https://code.getmdl.io/1.3.0/material.min.js"></script>
 	<script type="text/javascript">
 	function updateSlider(seconds) {
 		var seconds = parseInt(document.getElementById('text_01').value) + (parseInt(document.getElementById('text_01').value) * 60);
@@ -20,13 +20,13 @@
 				',"unit":"s"}';
 		}	
 
-                var snackbarContainer = document.querySelector('#demo-snackbar-example');
-                var notification = document.querySelector('.mdl-js-snackbar');
-                var data = {
-                  message: 'Sending ' + action,
-                  timeout: 10000
-                };
-                notification.MaterialSnackbar.showSnackbar(data);
+        var snackbarContainer = document.querySelector('#demo-snackbar-example');
+        var notification = document.querySelector('.mdl-js-snackbar');
+        var data = {
+            message: 'Sending ' + action,
+            timeout: 10000
+        };
+        notification.MaterialSnackbar.showSnackbar(data);
 
 		var url = 'ajax.php?action=' + action;
 		if (duration) {
@@ -74,48 +74,22 @@
 </p>
 
 <?php
-$ini_array = parse_ini_file('/tmp/smarthome.ini', true);
-$otr_email = $ini_array['otr']['otr_email'];
-$otr_password = $ini_array['otr']['otr_password'];
-
 if (!empty($_GET['url']))  {
-$otr_download_url = $_GET['url'];
+    require_once(__DIR__ . '/Otr.php');
+    require_once(__DIR__ . '/Chromecast.php');
 
-$context = stream_context_create(['http' => ['header' => 'Cookie: otr_email='.$otr_email.'; otr_password='.$otr_password.';']]);
+    $otr = new Otr('/tmp/smarthome.ini');
+    
+    if (isset($_GET['url']) && preg_match('/www\.onlinetvrecorder\.com/', $_GET['url'])) { 
+        $bestHit = $otr->getBestVideoUrl($_GET['url']);
+    } else {
+        $bestHit = $_GET['url'];
+    }
 
-$content = file_get_contents($otr_download_url, false, $context );
-if(!preg_match_all('/a href=\'(http.+download[^\']+)/', $content, $res)) {
-	throw new Exception('no download link');
-}
+    echo $bestHit;
 
-$scores = [
-#    'HQ.avi',
-#    'HQ.cut.avi',
-    'mp4',
-#    'avi',
-#    'cut.avi',
-    'cut.mp4',
-    'HQ.cut.mp4'
-];
-
-$scoredList = [];
-foreach ($res[1] as $url) {
-	$piece = explode('.mpg.', $url);
-	$score = array_search($piece[1], $scores);
-	$map[$url] = $score;
-}
-
-arsort($map);
-
-$bestHit = key($map);
-
-echo $bestHit;
-
-// send to api
-$auth = base64_encode($ini_array['transmitter']['api_user'].':'.$ini_array['transmitter']['api_pass']);
-$context = stream_context_create(['http' => ['header' => "Authorization: Basic $auth", 'method' => 'POST']]);
-file_get_contents($ini_array['transmitter']['api_url'] . "/chromecast/stream?url=" . $bestHit, false, $context );
-
+    $cast = new Chromecast('/tmp/smarthome.ini');
+    $cast->stream($bestHit);
 }
 ?>
 <div id="demo-snackbar-example" class="mdl-js-snackbar mdl-snackbar">
