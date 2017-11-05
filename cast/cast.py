@@ -6,11 +6,13 @@ from os.path import expanduser
 import time
 import pychromecast
 import argparse
+import sys
+import json
 
 parser = argparse.ArgumentParser(description='Chromecast toolset.')
 parser.add_argument('--url', help='url of the video')
-parser.add_argument('--seekforward', type=int, help='Skip by n seconds')
-parser.add_argument('--seekback', type=int, help='Rewind by n seconds')
+parser.add_argument('--seekforward', help='Skip by n seconds')
+parser.add_argument('--seekback', help='Rewind by n seconds')
 parser.add_argument('--stop', help='Send the STOP command.', nargs='?')
 parser.add_argument('--status', help='Print status information.', nargs='?')
 parser.add_argument('--pause', help='Send the PAUSE command.')
@@ -54,10 +56,14 @@ if args.pause:
     mc.pause()
 
 if args.seekforward:
-    mc.seek(mc.status.current_time + args.seekforward);
+    j = json.loads(args.seekforward)
+    duration_s = int(j['amount'])
+    mc.seek(mc.status.current_time + duration_s);
 
 if args.seekback:
-    mc.seek(mc.status.current_time - args.seekback);
+    j = json.loads(args.seekback)
+    duration_s = int(j['amount'])
+    mc.seek(mc.status.current_time - duration_s);
 
 if args.stop:
     mc.stop()
