@@ -21,6 +21,43 @@ endpoints:
               command: "/home/pi/assistant-helper/temperature {{.query.sensor}}"
               format: "text"
   -
+    path: "/thermostat"
+    authorizers:
+      - "basic"
+    methods:
+      GET:
+        type: "shell"
+        query_params:
+          params:
+           - 
+             name: "device"
+             regexp: "^[0-9A-Z:]+$"
+        config:
+          commands:
+            - 
+              chdir: "/tmp"
+              command: "/home/pi/assistant-helper/thermostats/thermostat {{.query.device}}"
+              format: "text"
+      POST:
+        type: "shell"
+        query_params:
+          params:
+           - 
+             name: "device"
+             regexp: "^[0-9A-Z:]+$"
+           - 
+             name: "command"
+             regexp: "^[a-z_]+$"
+           - 
+             name: "target"
+             regexp: "^[0-9a-zA-Z]+$"
+        config:
+          commands:
+            - 
+              chdir: "/tmp"
+              command: "/home/pi/assistant-helper/thermostats/thermostat {{.query.device}} {{.query.command}} --target {{.query.target}}"
+              format: "text"
+  -
     path: "/transmitter"
     authorizers:
       - "basic"
