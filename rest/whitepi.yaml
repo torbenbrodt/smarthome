@@ -3,6 +3,43 @@ port: 9901
 pretty_json: true
 endpoints:
   -
+    path: "/light"
+    authorizers:
+      - "basic"
+    methods:
+      GET:
+        type: "shell"
+        query_params:
+          params:
+           - 
+             name: "sensor"
+             regexp: "^[a-zA-Z]+$"
+        config:
+          commands:
+            - 
+              chdir: "/tmp"
+              command: "python /home/pi/assistant-helper/light/light.py --sensor {{.query.sensor}}"
+              format: "text"
+      POST:
+        type: "shell"
+        query_params:
+          params:
+           - 
+             name: "sensor"
+             regexp: "^[a-zA-Z]+$"
+           - 
+             name: "sunrise"
+             regexp: "^[0-9:]+$"
+           - 
+             name: "sunset"
+             regexp: "^[0-9:]+$"
+        config:
+          commands:
+            - 
+              chdir: "/tmp"
+              command: "python /home/pi/assistant-helper/light/light.py --sensor {{.query.sensor}} --sunrise {{.query.runrise}} --sunset {{.query.sunset}}"
+              format: "text"
+  -
     path: "/temperature"
     authorizers:
       - "basic"
