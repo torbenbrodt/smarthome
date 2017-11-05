@@ -7,5 +7,5 @@ if (!empty($_GET['duration'])) {
 }
 
 $cast = new Chromecast('/tmp/smarthome.ini');
-$cast->post($bestHit);
+$cast->post($url);
 
