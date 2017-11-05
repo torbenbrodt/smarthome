@@ -1,0 +1,13 @@
+#!/bin/bash
+export LC_ALL=C.UTF-8
+export LANG=C.UTF-8
+
+if [[ "$1" == "foo" ]];
+then
+	export EQ3_MAC="xx:xx"
+else
+	export EQ3_MAC=$1
+fi
+
+shift
+eq3cli $@
