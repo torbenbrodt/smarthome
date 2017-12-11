@@ -1,0 +1,9 @@
+#!/bin/bash
+# usage: ./timer add
+
+if [ "$1" == "add" ];
+then
+	date +"%s" >> /home/pi/assistant-helper/web/timer/timer.log
+
+fi
+
