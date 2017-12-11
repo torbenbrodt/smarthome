@@ -19,9 +19,8 @@
 	  width: 320px;
 	  height: 200px;
 	}
-	body {
-		margin: 10px;
-	}
+	.mdl-card { margin: 15px 15px;}
+	body {min-height: auto;}
 	</style>
 	<script type="text/javascript">
 	function stream(url) {
@@ -34,6 +33,18 @@
 		notification.MaterialSnackbar.showSnackbar(data);
 		location.href = url;
 	}
+	function deleteRecording(epg_id) {
+	        var snackbarContainer = document.querySelector('#demo-snackbar-example');
+	        var notification = document.querySelector('.mdl-js-snackbar');
+	        var data = {
+	            message: 'Remove from Playlist',
+	            timeout: 10000
+	        };
+	        notification.MaterialSnackbar.showSnackbar(data);
+
+                (new Image()).src = 'ajax.php?action=delete&epg_id=' + epg_id;
+		return false;
+	}
 	</script>
 </head>
 <body style="text-align:center">
@@ -44,11 +55,11 @@
 <button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored" onclick="document.location.href='stream.php'">
   controls
 </button>
-<button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored" onclick="document.location.href='stream.php?url=' + prompt('Please enter url')">
-  add
-</button>
 <button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored" onclick="document.location.href='/video/?source=disney'">
   disney
+</button>
+<button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored" onclick="document.location.href='/video/?source=classic'">
+  classic
 </button>
 </p>
 <?php
@@ -63,6 +74,13 @@ if (empty($_GET['source'])) {
 
 foreach ($lines as $line) {
 
+	$deletehtml = '';
+	if ($line->epg_id) {
+		$deletehtml = '<button class="mdl-button mdl-js-button mdl-button--icon mdl-button--colored" onclick="deleteRecording(\''.$line->epg_id.'\')">
+      <i class="material-icons">delete</i>
+    </button>';
+	}
+
 	echo '<div class="demo-card-wide mdl-card mdl-shadow--2dp">
   <div class="mdl-card__title" style="background: url(\''.$line->image.'\') center / cover;">
     <h2 class="mdl-card__title-text">'.$line->title.'</h2>
@@ -70,14 +88,15 @@ foreach ($lines as $line) {
   <div class="mdl-card__supporting-text">'.substr($line->text, 0, 170).'..</div>
   <div class="mdl-card__actions mdl-card--border">
   	'.($line->timestamp ? date('D d.M', $line->timestamp) : '').'
-  	'.$line->icons.'
+	'.$line->icons.'
+	'.$deletehtml.'
   </div>
   <div class="mdl-card__menu">
     <button class="mdl-button mdl-js-button mdl-button--fab mdl-button--colored" onclick="stream(\'stream.php?url='.urlencode($line->url).'\')">
       <i class="material-icons">play_arrow</i>
     </button>
   </div>
-</div><br />';
+</div>';
 
 }
 ?>

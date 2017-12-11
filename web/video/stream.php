@@ -38,6 +38,10 @@
 </head>
 <body>
 
+<button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored" onclick="document.location.href='stream.php?url=' + prompt('Please enter url')">
+  add
+</button>
+
 <p>
   <div class="mdl-textfield mdl-js-textfield">
     <input class="mdl-textfield__input" type="text" id="text_01" style="font-size: 42pt; text-align: center; margin: 30px 0px i30px 0px" >

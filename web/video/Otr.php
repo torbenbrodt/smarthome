@@ -1,5 +1,6 @@
 <?php
 class OtrLine {
+    public $epg_id;
     public $url;
     public $title;
     public $station;
@@ -22,10 +23,17 @@ class Otr {
 	/**
 	 * @return string
 	 */
-	protected function retrieve($otr_url) {
-	    $context = stream_context_create(['http' => ['header' => 
-	        'Cookie: otr_email='.$this->email.'; otr_password='.$this->password.';'
-	    ]]);
+	protected function retrieve($otr_url, $postdata = '') {
+	    $method = 'GET';
+	    $header = 'Cookie: otr_email='.$this->email.'; otr_password='.$this->password.';';
+	    if ($postdata) {
+	        $method = 'POST';
+	        $header .= "\r\n"
+                        . "Content-type: application/x-www-form-urlencoded\r\n"
+                        . "Content-Length: " . strlen($postdata) . "\r\n";
+	    }
+	
+	    $context = stream_context_create(['http' => ['method' => $method, 'header' => $header, 'content' => $postdata]]);
 	    return $content = file_get_contents($otr_url, false, $context );;
 	}
 	
@@ -41,11 +49,14 @@ class Otr {
         $scores = [
         #    'HQ.avi',
         #    'HQ.cut.avi',
-            'mp4',
         #    'avi',
         #    'cut.avi',
+            'mp4',
             'cut.mp4',
-            'HQ.cut.mp4'
+            'HQ.mp4',
+            'HD.mp4',
+            'HQ.cut.mp4',
+            'HD.cut.mp4',
         ];
 
         $scoredList = [];
@@ -71,6 +82,12 @@ class Otr {
 		}
 		return $new;
 	}
+	
+	public function delete($epg_id) {
+	    $otr_download_url = 'https://www.onlinetvrecorder.com/v2/?go=list&tab=search&preset=2&saveorder=beginn%20DESC';
+	    $postdata = 'cb_1=on&epg_id_1='.$epg_id.'&multioption=deleterecordings&btn_multioption=+Aktion+ausf%C3%BChren+';
+	    $this->retrieve($otr_download_url, $postdata);
+	}
 
     /**
 	 * @return OtrLine[]
@@ -84,6 +101,10 @@ class Otr {
 
         if(!preg_match_all('/(go=download[^\']+)[^>]+>(.+)<\/a/', $content, $url_title)) {
 	        throw new Exception('no title');
+        }
+
+        if(!preg_match_all('/go=download&epg_id=(\d+)/', $content, $ids)) {
+	        throw new Exception('no ids');
         }
 
         if(!preg_match_all('/spanlongtext[^>]+>([^<]+)/', $content, $text)) {
@@ -100,19 +121,20 @@ class Otr {
         }
 
         if(!preg_match_all('/>(\d{1,2}\.\d{1,2}\.\d{2,4})<\/td>/', $content, $dates)) {
-	        throw new Exception('no dates');
-	}
-	$lines = [];
+            throw new Exception('no dates');
+        }
+        $lines = [];
         for($i=0; $i<count($url_title[1]); $i++) {
             $line = new OtrLine();
+            $line->epg_id = $ids[1][$i];
             $line->url = 'https://www.onlinetvrecorder.com/v2/?' . $url_title[1][$i];
             $line->title = $url_title[2][$i];
             $line->text = $text[1][$i];
             $line->station = $station[1][$i];
-	    $line->timestamp = strtotime(preg_replace('/(\d{2})$/', '20$1', $dates[1][$i]));
+	        $line->timestamp = strtotime(preg_replace('/(\d{2})$/', '20$1', $dates[1][$i]));
             $line->image = $images[1][$i];
             $line->icons = $icons[1][$i];
-	    $lines[] = $line;
+	        $lines[] = $line;
         }
         return $lines;
 	}
