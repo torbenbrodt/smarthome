@@ -12,12 +12,26 @@ INPUT_PARAMETER=`echo "$2" | awk '{print tolower($0)}'`
 case "$INPUT_ACTION" in
         tab)
             case "$INPUT_PARAMETER" in
+                    reload)
+                        xdotool key ctrl+r
+                        ;;
+
                     switch)
                         xdotool key ctrl+Tab
                         ;;
 
+                    count)
+			COUNT=$(ps fax | grep chromium | grep renderer | wc -l | sed 's/^ *//g')
+			#COUNT=`expr $COUNT - 5`
+			echo $COUNT
+                        ;;
+
                     close)
                         xdotool key ctrl+w
+                        ;;
+
+		    [1-9])
+                        xdotool key ctrl+$INPUT_PARAMETER
                         ;;
 
                     *)

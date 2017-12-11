@@ -1,19 +1,51 @@
 #!/bin/bash
-# usage: ./display toggle
-
-INPUT_SWITCH=`echo "$1" | awk '{print tolower($0)}'`
+# usage: ./display
+# usage: ./display rotate
 
 export DISPLAY=:0.0
 export XAUTHORITY=/home/pi/.Xauthority
 
-if [ "$INPUT_SWITCH" == "toggle" ];
-then
-	STATUS_FILE="$(dirname "${0}")/display.state"
-	if [ -f $STATUS_FILE ]; then
-		rm $STATUS_FILE
-		xset dpms force on
-	else
-		touch $STATUS_FILE
-		xset dpms force off
-	fi
+STATUS_FILE="$(dirname "${0}")/display.state"
+
+if [ -f $STATUS_FILE ]; then
+	STATUS_VALUE=`cat $STATUS_FILE`
+else
+	STATUS_VALUE="0"
 fi
+
+TABS=`/home/pi/assistant-helper/browser tab count`
+
+if [[ "$1" == "rotate" ]];
+then
+    TABS=`expr $TABS`
+    MODULO=`expr $STATUS_VALUE % $TABS`
+    MODULO=`expr $MODULO + 1`
+
+    echo $MODULO
+
+    /home/pi/assistant-helper/browser tab $MODULO
+    /home/pi/assistant-helper/browser tab reload
+
+    xdotool click --clearmodifiers 4
+    sleep 3
+    xdotool click --clearmodifiers 5
+    sleep 3
+    xdotool click --clearmodifiers 4
+    xdotool click --clearmodifiers 4
+
+else 
+    TABS=`expr $TABS + 1`
+    MODULO=`expr $STATUS_VALUE % $TABS`
+
+    if [[ "$MODULO" == "0" ]];
+    then
+            /home/pi/assistant-helper/transmitter display aus
+    else 
+            /home/pi/assistant-helper/browser tab $MODULO
+            /home/pi/assistant-helper/transmitter display an
+    fi
+
+    MODULO=`expr $MODULO + 1`
+fi
+
+echo $MODULO > $STATUS_FILE
