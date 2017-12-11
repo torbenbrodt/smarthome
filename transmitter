@@ -6,7 +6,7 @@
 INPUT_DEVICE=`echo "$1" | awk '{print tolower($0)}'`
 INPUT_SWITCH=`echo "$2" | awk '{print tolower($0)}'`
 
-STATUS_FILE="$(dirname "${0}")/$INPUT_DEVICE.state"
+STATUS_FILE="/tmp/$INPUT_DEVICE.state"
 
 if [ "$INPUT_SWITCH" == "toggle" ];
 then
