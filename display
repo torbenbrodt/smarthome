@@ -1,11 +1,12 @@
 #!/bin/bash
 # usage: ./display
 # usage: ./display rotate
+# usage: ./display tab 3
 
 export DISPLAY=:0.0
 export XAUTHORITY=/home/pi/.Xauthority
 
-STATUS_FILE="$(dirname "${0}")/display.state"
+STATUS_FILE="/tmp/display.state"
 
 if [ -f $STATUS_FILE ]; then
 	STATUS_VALUE=`cat $STATUS_FILE`
@@ -17,35 +18,73 @@ TABS=`/home/pi/assistant-helper/browser tab count`
 
 if [[ "$1" == "rotate" ]];
 then
-    TABS=`expr $TABS`
+    # stop executing if screen if off
+    if xset -q | grep -q 'Monitor is Off'; then
+        exit
+    fi
+
     MODULO=`expr $STATUS_VALUE % $TABS`
     MODULO=`expr $MODULO + 1`
-
-    echo $MODULO
 
     /home/pi/assistant-helper/browser tab $MODULO
     /home/pi/assistant-helper/browser tab reload
 
-    xdotool click --clearmodifiers 4
-    sleep 3
-    xdotool click --clearmodifiers 5
-    sleep 3
-    xdotool click --clearmodifiers 4
-    xdotool click --clearmodifiers 4
-
-else 
-    TABS=`expr $TABS + 1`
-    MODULO=`expr $STATUS_VALUE % $TABS`
-
-    if [[ "$MODULO" == "0" ]];
+    if [[ "$2" != "noscroll" ]];
     then
-            /home/pi/assistant-helper/transmitter display aus
-    else 
-            /home/pi/assistant-helper/browser tab $MODULO
-            /home/pi/assistant-helper/transmitter display an
+	# scroll up
+	for i in `seq 1 20`;
+	do
+    	    xdotool click --clearmodifiers 4
+	done
+    	sleep 3
+	for i in `seq 1 10`;
+	do
+    	    xdotool click --clearmodifiers 5
+	done
+    	sleep 3
+	for i in `seq 1 20`;
+	do
+    	    xdotool click --clearmodifiers 4
+	done
     fi
 
-    MODULO=`expr $MODULO + 1`
+elif [[ "$1" == "tab" ]];
+then
+    MODULO="$2"
+
+    /home/pi/assistant-helper/browser tab $MODULO
+    /home/pi/assistant-helper/browser tab reload
+
+    # turn on screen, if off
+    if xset -q | grep -q 'Monitor is Off'; then
+    	/home/pi/assistant-helper/transmitter display an
+   	xset dpms force on
+
+	# after 10 seconds turn off again
+	sleep 10
+    	/home/pi/assistant-helper/transmitter display aus
+   	xset dpms force off
+    fi
+else 
+    MODULO=`expr $STATUS_VALUE + 1`
+
+    if [[ "$MODULO" -gt "$TABS" ]];
+    then
+            MODULO="0"
+
+	    /home/pi/assistant-helper/transmitter display aus
+	    xset dpms force off
+    else 
+	    /home/pi/assistant-helper/browser tab $MODULO
+
+	    # if screen is Off, turn it on and reload the tab
+            if xset -q | grep -q 'Monitor is Off'; then
+    		/home/pi/assistant-helper/browser tab reload
+            	/home/pi/assistant-helper/transmitter display an
+	    	xset dpms force on
+            fi
+    fi
 fi
 
+umask 0000
 echo $MODULO > $STATUS_FILE
