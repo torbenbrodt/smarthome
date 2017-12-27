@@ -1,0 +1,17 @@
+#!/bin/bash
+set -e
+
+# e.g. /home/pi/assistant-helper/web/video/prefetch/instant.queue
+QUEUE_FILE="$1"
+
+# e.g. /home/pi/assistant-helper/web/video/prefetch/
+DEST_DIR="$2"
+
+while read -r line; do
+  sed -i '1,1 d' $QUEUE_FILE
+  wget $line -P $DEST_DIR
+done < $QUEUE_FILE
+
+# delete prefetch files older than 30 days
+find $DEST_DIR -type f -name '*.mp4' -mtime +30 -exec rm {} \;
+
