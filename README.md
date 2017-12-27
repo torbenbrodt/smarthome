@@ -17,11 +17,13 @@ Technically I use
  - Raspberry PI 3
  - Aukru 433 MHz transmitter / sender / receiver
  - LAOMAO 5 Infrared LED emission & receiver
-
-Potential future projects
  - DHT22/AM2302 temperature monitoring (but no more 3.3V)
  - 3.5" touch display running browser to show temperature and have command shortcuts
  - System update to Strech incl. Desktop and autostart browser with tabswitcher plugin
+
+![documentation](docs/images/smarthome.png)
+
+Potential future projects
  - Better documentation ;)
 
 ## Goexpose
